@@ -58,16 +58,9 @@ def main() -> None:
     config: Config = Config()
 
     keyboard_listeners: List[KeyboardListener] = [
-        KeyboardListener('ctrl', timeout=config.key_press_timeout)
+        KeyboardListener(key_name, hkl=hkl, timeout=config.key_press_timeout)
+        for key_name, hkl in config.hotkeys.items()
     ]
-    if config.right_ctrl_hkl is not None:
-        keyboard_listeners.append(KeyboardListener('right ctrl',
-                                                   hkl=config.right_ctrl_hkl,
-                                                   timeout=config.key_press_timeout))
-    if config.right_shift_hkl is not None:
-        keyboard_listeners.append(KeyboardListener('right shift',
-                                                   hkl=config.right_shift_hkl,
-                                                   timeout=config.key_press_timeout))
 
     def start_listen() -> None:
         for listener in keyboard_listeners:

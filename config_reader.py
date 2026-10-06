@@ -13,32 +13,51 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import configparser
 import logging
+from pathlib import Path
+from typing import Optional
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG = {
-    'right_ctrl_hkl': -0xf57fbde,
-    'right_shift_hkl': 0x4090409,
     'key_press_timeout': 0.15,
-    'layout_check_interval': 0.5
+    'layout_check_interval': 0.5,
 }
 
 
 class Config:
-    """Reads config from an INI file and stores data into fields."""
+    """Reads application settings and hotkey mappings from an INI file."""
 
-    def __init__(self) -> None:
-        self.right_ctrl_hkl: int = int(DEFAULT_CONFIG['right_ctrl_hkl'])
-        self.right_shift_hkl: int = int(DEFAULT_CONFIG['right_shift_hkl'])
-        self.key_press_timeout: float = float(DEFAULT_CONFIG['key_press_timeout'])
-        self.layout_check_interval: float = float(DEFAULT_CONFIG['layout_check_interval'])
+    def __init__(self, config_path: Optional[Path] = None) -> None:
+        path = config_path or Path(__file__).with_name('config.ini')
+        parser = configparser.ConfigParser()
+        parser.read(path, encoding='utf-8')
+
+        self.key_press_timeout: float = float(
+            parser.getfloat('settings', 'key press timeout', fallback=DEFAULT_CONFIG['key_press_timeout'])
+        )
+        self.layout_check_interval: float = float(
+            parser.getfloat(
+                'settings',
+                'layout check interval',
+                fallback=DEFAULT_CONFIG['layout_check_interval'],
+            )
+        )
+
+        hotkeys: dict[str, Optional[int]] = {}
+        if parser.has_section('hotkeys'):
+            for key, value in parser.items('hotkeys'):
+                hotkeys[key.strip().lower()] = (
+                    None if not value.strip() else int(value.strip(), 0)
+                )
+
+        self.hotkeys: dict[str, Optional[int]] = hotkeys
 
 
 def main() -> None:
     config: Config = Config()
-    print(f'{config.right_ctrl_hkl = }')
-    print(f'{config.right_shift_hkl = }')
+    print(f'{config.hotkeys = }')
     print(f'{config.key_press_timeout = }')
     print(f'{config.layout_check_interval = }')
 

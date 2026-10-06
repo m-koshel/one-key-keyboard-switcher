@@ -28,7 +28,7 @@ Definaed in:
 
 ## How it works
 
-The program provides a convenient way to switch between keyboard layouts using a single key. Instead of the usual method of using a key combination (like `Alt + Shift`), this program allows users to assign the `right CTRL` and `right SHIFT` keys to specific layouts, and the `left CTRL` key for a round-robin switching method.
+The program provides a convenient way to switch between keyboard layouts using a single key. Instead of the usual method of using a key combination (like `Alt + Shift`), this program allows users to assign configured keys to specific layouts, and the `ctrl` key for a round-robin switching method.
 
 <img src="docs/diagrams/start_sequence.png" width="600"/>
 
@@ -36,14 +36,12 @@ The program provides a convenient way to switch between keyboard layouts using a
 
 1. Start program from the script [main.py](main.py).
 2. Read configuration settings from the [config.ini](config.ini) by [config_reader.py](config_reader.py):
-   * **right shift** - Language ID to be selected by the right SHIFT key press.
+   * **left shift** - Ukrainian layout (`0x422`).
+   * **right shift** - United States layout (`0x409`).
    * **right ctrl** - Language ID to be selected by the right CTRL key press.
    * **layout check interval** - The time interval, in seconds (integer or float value), for checking layout changes.
    * **key press timeout** - If a hotkey is pressed for a duration in seconds (integer or float value) longer than this value, the layout change will not occur.
-3. Attach listeners ([keyboard_listener.py](keyboard_listener.py)) on keys:
-   * (left) CTRL
-   * right CTRL
-   * right SHIFT
+3. Attach listeners ([keyboard_listener.py](keyboard_listener.py)) for every key in the `[hotkeys]` section.
 4. Start keyboard monitor ([keyboard_layout_monitor.py](keyboard_layout_monitor.py)):
    * Start the tray icon ([tray_icon.py](tray_icon.py)) with the current layout flag ([flags/\*.png](flags)).
 
@@ -222,10 +220,16 @@ python build.py
 
 Through the [config.ini](config.ini) file, you can configure:
 
-* Binding keyboard language (layout) to the `right SHIFT` key - option `right shift`. It may be either in decimal (1058) or hexadecimal (0x422) format. See `Language ID` at [Microsoft Learn](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c).
-* Binding keyboard language (layout) to the `right CTRL` key - option `right ctrl`. It may be either in decimal (1058) or hexadecimal (0x422) format. See `Language ID` at [Microsoft Learn](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c).
-* How often should the program check if the keyboard layout has changed to update the tray icon - option `layout check interval`. It may be either an integer or a float (minimum value is 0.1).
-* Duration of holding the hot-key to consider it a timeout - option `key press timeout`. It may be either an integer or a float (minimum value is 0.1).
+* Hotkey-to-layout mappings in the `[hotkeys]` section. Each key name maps to a decimal or hexadecimal layout ID. Leave the value empty to use the round-robin next-layout behavior. For example:
+  ```ini
+  [hotkeys]
+  ctrl =
+  left shift = 0x422
+  right ctrl = 0x422
+  right shift = 0x409
+  ```
+* How often should the program check if the keyboard layout has changed to update the tray icon - option `layout check interval` in `[settings]`. It may be either an integer or a float (minimum value is 0.1).
+* Duration of holding the hot-key to consider it a timeout - option `key press timeout` in `[settings]`. It may be either an integer or a float (minimum value is 0.1).
 
 # Sources
 
