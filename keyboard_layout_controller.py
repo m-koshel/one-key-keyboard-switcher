@@ -15,6 +15,7 @@
 
 from typing import Optional
 
+import logging
 import win32gui
 import win32api
 import win32process
@@ -27,7 +28,7 @@ INPUTLANGCHANGE_SYSCHARSET: int = 0x0001
 """Flag means: set the new input locale to be the keyboard layout.
 https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-inputlangchangerequest
 """
-
+logger = logging.getLogger(__name__)
 
 def get_active_hkl() -> int:
     """Returns active keyboard HKL for the foreground window.
@@ -40,14 +41,65 @@ def get_active_hkl() -> int:
     return win32api.GetKeyboardLayout(thread_id)
 
 
-def set_next_layout() -> None:
-    """Sets the next (cyclically) layout in the list as the current one."""
+_current_hkl: int | None = None
+_previous_hkl: int | None = None
 
-    installed: tuple[int, ...] = win32api.GetKeyboardLayoutList()
+
+def get_installed_hkls() -> tuple[int, ...]:
+    """Returns installed keyboard layout handles (HKLs)."""
+
+    return tuple(win32api.GetKeyboardLayoutList())
+
+
+def reset_hkl_history() -> None:
+    """Clears MRU HKL history."""
+
+    global _current_hkl, _previous_hkl
+    _current_hkl = None
+    _previous_hkl = None
+
+
+def save_current_hkl(hkl: int) -> None:
+    """Records the currently active HKL for MRU switching."""
+
+    global _current_hkl, _previous_hkl
+    if _current_hkl is None:
+        installed_hkls: tuple[int, ...] = get_installed_hkls()
+        _previous_hkl = installed_hkls[0] if installed_hkls else None
+
+    installed_hkls: tuple[int, ...] = get_installed_hkls()    
+    first_hkl = installed_hkls[0]
+    if _current_hkl != first_hkl and hkl != first_hkl: 
+        _previous_hkl = first_hkl
+    else:
+        _previous_hkl = _current_hkl
+    _current_hkl = hkl
+      
+
+def get_previous_hkl() -> int | None:
+    """Returns the most recently used HKL before the current HKL."""
+
+    return _previous_hkl
+
+
+def set_next_layout(layout_switching: str = 'CKL') -> None:
+    """Switches to the next cyclic HKL or the most recently used HKL."""
+
+    global _current_hkl, _previous_hkl
+    mode: str = layout_switching.strip().upper()
+    installed_hkls: tuple[int, ...] = get_installed_hkls()
+    if mode == 'FLU':
+        if _previous_hkl is None:
+            installed_hkls: tuple[int, ...] = get_installed_hkls()
+            _previous_hkl = installed_hkls[0] if installed_hkls else None
+        else:
+            set_layout(_previous_hkl)
+            return
+    
+    installed_hkls: tuple[int, ...] = get_installed_hkls()
     current_hkl: int = get_active_hkl()
-
-    current_index: int = installed.index(current_hkl)
-    next_hkl: int = installed[(current_index + 1) % len(installed)]
+    current_index: int = installed_hkls.index(current_hkl)
+    next_hkl: int = installed_hkls[(current_index + 1) % len(installed_hkls)]
     set_layout(next_hkl)
 
 

@@ -23,6 +23,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 DEFAULT_CONFIG = {
     'key_press_timeout': 0.15,
     'layout_check_interval': 0.5,
+    'layout_switching': 'CKL',
 }
 
 
@@ -44,6 +45,17 @@ class Config:
                 fallback=DEFAULT_CONFIG['layout_check_interval'],
             )
         )
+        self.layout_switching: str = parser.get(
+            'settings',
+            'layout switching',
+            fallback=DEFAULT_CONFIG['layout_switching'],
+        ).strip().upper()
+        if self.layout_switching not in {'CKL', 'FLU'}:
+            logger.warning(
+                'Unsupported layout switching mode %r; using CKL',
+                self.layout_switching,
+            )
+            self.layout_switching = 'CKL'
 
         hotkeys: dict[str, Optional[int]] = {}
         if parser.has_section('hotkeys'):

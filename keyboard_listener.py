@@ -33,7 +33,13 @@ class KeyboardListener:
     _on_release_remove: Optional[Callable] = None
     """Function that removes 'on release' listener."""
 
-    def __init__(self, key_name: str, hkl: int | None = None, timeout: float = None) -> None:
+    def __init__(
+            self,
+            key_name: str,
+            hkl: int | None = None,
+            timeout: float = None,
+            layout_switching: str = 'CKL'
+    ) -> None:
         if hkl is None:
             logger.info(f'Set listener for round switch on "{key_name}"')
         else:
@@ -41,6 +47,7 @@ class KeyboardListener:
 
         self._timeout: float = timeout if timeout is not None else TIMEOUT
         self._key_name: str = key_name
+        self._layout_switching: str = layout_switching.upper()
         """Name of the observed key."""
         self._key_down_time: float = 0
         """Time when the key was pressed down."""
@@ -91,4 +98,4 @@ class KeyboardListener:
         if self._hkl is not None:
             keyboard_layout_controller.set_layout(self._hkl)
         else:
-            keyboard_layout_controller.set_next_layout()
+            keyboard_layout_controller.set_next_layout(self._layout_switching)

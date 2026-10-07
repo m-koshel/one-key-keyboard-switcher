@@ -50,7 +50,7 @@ class KeyboardLayoutMonitor:
             active_hkl: int = keyboard_layout_controller.get_active_hkl()
             if active_hkl != prev_active_hkl:
                 prev_active_hkl = active_hkl
-
+                keyboard_layout_controller.save_current_hkl(active_hkl)
                 layout: LayoutInfo = self._layout_info_util.from_hkl(active_hkl)
                 country_code: str = layout.country_code or ''
                 if not country_code:

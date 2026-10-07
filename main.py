@@ -58,7 +58,12 @@ def main() -> None:
     config: Config = Config()
 
     keyboard_listeners: List[KeyboardListener] = [
-        KeyboardListener(key_name, hkl=hkl, timeout=config.key_press_timeout)
+        KeyboardListener(
+            key_name,
+            hkl=hkl,
+            timeout=config.key_press_timeout,
+            layout_switching=config.layout_switching,
+        )
         for key_name, hkl in config.hotkeys.items()
     ]
 
