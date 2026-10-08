@@ -66,7 +66,11 @@ def get_root_dir() -> str:
 
 
 def get_root_module_dir() -> str:
-    return os.path.join(get_root_dir(), "onekey_layout_switcher")
+    root_dir = get_root_dir()
+    package_name = (
+        "multi_layout_switcher" if getattr(sys, 'frozen', False) else "onekey_layout_switcher"
+    )
+    return os.path.join(root_dir, package_name)
 
 
 def get_assets_dir() -> str:

@@ -122,7 +122,7 @@ if __name__ == '__main__':
         display_name="Package Display Name",
         version="1.0.0.0",
         publisher_display_name="Publisher Display Name",
-        executable="OnekeyLayoutSwitcher.exe",
+        executable="MultiLayoutSwitcher.exe",
         exe_display_name="OneKey Layout Switcher",
         exe_description="Helps you to switcher keyboard layout with one key"
     )

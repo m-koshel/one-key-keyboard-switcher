@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-output_name = 'One key layout switcher'
+output_name = 'Multi Layout Switcher'
 
 icon = 'icon.gif'
 # If you use icon in 'png' format (or in 'ico' format but created by pillow lib)

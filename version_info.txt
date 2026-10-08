@@ -37,10 +37,10 @@ VSVersionInfo(
       StringTable(
         u'040904B0',  # U.S. English, Unicode
         [
-        StringStruct(u'ProductName', u'One key layout switcher'),
+        StringStruct(u'ProductName', u'Multi Layout Switcher'),
         StringStruct(u'FileDescription', u'Switch between keyboard layouts'),
-        StringStruct(u'ProductVersion', u'1.0.0'),
-        StringStruct(u'LegalCopyright', u'Copyright (c) Oleksii Sylichenko (github.com/asilichenko)')
+        StringStruct(u'ProductVersion', u'0.1.0'),
+        StringStruct(u'LegalCopyright', u'Copyright (c) 2026 MK')
         ]
       )
     ]),

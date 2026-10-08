@@ -38,7 +38,8 @@ VERSION_INFO_TEMPLATE_PATH: Path = BuildPaths.PACKAGING_PYINSTALLER / f"version_
 SPEC_FILE_NAME: str = 'app.spec'
 SPEC_TEMPLATE_PATH: Path = BuildPaths.PACKAGING_PYINSTALLER / "app-template.spec"
 
-ASSETS: str = os.path.join(onekey_layout_switcher.__name__, "assets")
+SOURCE_ASSETS: str = os.path.join(onekey_layout_switcher.__name__, "assets")
+DIST_ASSETS: str = "multi_layout_switcher/assets"
 
 
 def render_spec(exe_name: str, output_path: Path) -> None:
@@ -46,7 +47,8 @@ def render_spec(exe_name: str, output_path: Path) -> None:
                       .replace('{{EXE_NAME}}', exe_name)
                       .replace('{{MAIN_PY}}', str(BuildPaths.MAIN_PY_PATH))
                       .replace('{{ICON}}', str(BuildPaths.APP_ICON_PATH))
-                      .replace('{{MANIFEST}}', str(BuildPaths.DPI_AWARE_MANIFEST_PATH)))
+                      .replace('{{MANIFEST}}', str(BuildPaths.DPI_AWARE_MANIFEST_PATH))
+                      .replace('{{CONFIG}}', str(ROOT / 'config.ini')))
 
     (output_path / SPEC_FILE_NAME).write_text(spec_text)
 
@@ -87,12 +89,16 @@ def build(*,
 
     make_exe(build_path=build_path, dist_path=dist_path)
 
-    # copy assets
-    dist_assets = dist_path / ASSETS
+    # Keep user-editable settings next to the executable so the frozen app can
+    # load them when launched from the distribution folder.
+    shutil.copy2(ROOT / 'config.ini', dist_path / 'config.ini')
+
+    # Copy source assets under a distribution-only folder name.
+    dist_assets = dist_path / DIST_ASSETS
     if dist_assets.exists():
         shutil.rmtree(dist_assets)
     shutil.copytree(
-        src=ROOT / ASSETS,
+        src=ROOT / SOURCE_ASSETS,
         dst=dist_assets,
     )
 
@@ -103,7 +109,7 @@ if __name__ == '__main__':
     BuildPaths.BUILD.mkdir(exist_ok=True)
     BuildPaths.DIST.mkdir(exist_ok=True)
 
-    _exe_name = "OnekeyLayoutSwitcher.exe"
+    _exe_name = "MultiLayoutSwitcher.exe"
 
     _version_info: VersionInfo = VersionInfo(
         filevers=(1, 2, 3, 4),

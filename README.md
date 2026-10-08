@@ -1,6 +1,10 @@
-# One key switch keyboard layout for Windows
+# Multi Layout Switcher
 
 This simple program was developed to implement keyboard layout switching using just one key.
+
+Fork repository: https://github.com/m-koshel/one-key-keyboard-switcher
+
+Upstream repository: https://github.com/asilichenko/one-key-keyboard-switcher
 
 It utilizes the win32api, thus it will only work on Windows systems.
 
@@ -274,7 +278,11 @@ This program is designed to work on Windows systems only due to its dependency o
 
 # Author
 
-- [@asilichenko](https://github.com/asilichenko)
+- Current fork author: **MK**
+- Original upstream author: [@asilichenko](https://github.com/asilichenko)
+- Original upstream repository: https://github.com/asilichenko/one-key-keyboard-switcher
+
+The original attribution is preserved. The current fork uses MK as its author and publisher.
 
 # License
 

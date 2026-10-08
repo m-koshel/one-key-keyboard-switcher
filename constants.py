@@ -28,8 +28,8 @@
 
 import os
 
-APP_NAME = "OneKey Layout Switcher"
-APP_VERSION = "1.1"
+APP_NAME = "Multi Layout Switcher"
+APP_VERSION = "0.1.0"
 ERR_LOG_FILENAME = "error.log"
 
 IS_DEV_MODE: bool = os.getenv('APP_DEV_MODE', '0') == '1'

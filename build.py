@@ -22,7 +22,7 @@ from typing import List, Optional
 
 import icon_generator
 
-PROJECT_NAME: str = 'One key layout switcher'
+PROJECT_NAME: str = 'Multi Layout Switcher'
 DIST_ROOT: str = 'dist/'
 DIST_PATH: str = f'{DIST_ROOT}{PROJECT_NAME}/'
 

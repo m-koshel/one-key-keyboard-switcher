@@ -15,10 +15,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-__author__ = "Oleksii Sylichenko"
-__copyright__ = "Copyright © 2024-2026 Oleksii Sylichenko"
+__author__ = "MK"
+__copyright__ = "Copyright © 2026 MK"
 __license__ = "GNU GPL v3+"
-__version__ = "1.1"
+__version__ = "0.1.0"
 
 import logging
 from logging import FileHandler, Logger
