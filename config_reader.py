@@ -15,6 +15,7 @@
 
 import configparser
 import logging
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -31,7 +32,13 @@ class Config:
     """Reads application settings and hotkey mappings from an INI file."""
 
     def __init__(self, config_path: Optional[Path] = None) -> None:
-        path = config_path or Path(__file__).with_name('config.ini')
+        if config_path is not None:
+            path = config_path
+        elif getattr(sys, 'frozen', False):
+            path = Path(sys.executable).with_name('config.ini')
+        else:
+            path = Path(__file__).with_name('config.ini')
+
         parser = configparser.ConfigParser()
         parser.read(path, encoding='utf-8')
 

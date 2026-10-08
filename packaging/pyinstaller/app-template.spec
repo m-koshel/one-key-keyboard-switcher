@@ -4,12 +4,13 @@ main_py = r'{{MAIN_PY}}'
 exe_name = '{{EXE_NAME}}'
 icon = r'{{ICON}}'
 manifest = r'{{MANIFEST}}'
+config_path = r'{{CONFIG}}'
 
 a = Analysis(
     [main_py],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[(config_path, '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
