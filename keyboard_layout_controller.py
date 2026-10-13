@@ -13,9 +13,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from typing import Optional
+from typing import Callable, Optional
 
-import logging
 import win32gui
 import win32api
 import win32process
@@ -28,8 +27,6 @@ INPUTLANGCHANGE_SYSCHARSET: int = 0x0001
 """Flag means: set the new input locale to be the keyboard layout.
 https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-inputlangchangerequest
 """
-logger = logging.getLogger(__name__)
-
 def get_active_hkl() -> int:
     """Returns active keyboard HKL for the foreground window.
 
@@ -82,7 +79,10 @@ def get_previous_hkl() -> int | None:
     return _previous_hkl
 
 
-def set_next_layout(layout_switching: str = 'CKL') -> None:
+def set_next_layout(
+    layout_switching: str = 'CKL',
+    on_layout_changed: Callable[[int], None] | None = None
+) -> None:
     """Switches to the next cyclic HKL or the most recently used HKL."""
 
     global _current_hkl, _previous_hkl
@@ -93,21 +93,21 @@ def set_next_layout(layout_switching: str = 'CKL') -> None:
             installed_hkls: tuple[int, ...] = get_installed_hkls()
             _previous_hkl = installed_hkls[0] if installed_hkls else None
         else:
-            set_layout(_previous_hkl)
+            set_layout(_previous_hkl, on_layout_changed)
             return
     
     installed_hkls: tuple[int, ...] = get_installed_hkls()
     current_hkl: int = get_active_hkl()
     current_index: int = installed_hkls.index(current_hkl)
     next_hkl: int = installed_hkls[(current_index + 1) % len(installed_hkls)]
-    set_layout(next_hkl)
+    set_layout(next_hkl, on_layout_changed)
 
 
 def get_parent_window(hwnd: int) -> Optional[int]:
     return win32gui.GetParent(hwnd)
 
 
-def set_layout(hkl: int) -> None:
+def set_layout(hkl: int, on_layout_changed: Callable[[int], None] | None = None) -> None:
     """Sets the keyboard layout according to either the language ID or the layout ID.
     If a language contains more than one layout, it could be important what you pass to this method
     and what you want to change.
@@ -135,6 +135,10 @@ def set_layout(hkl: int) -> None:
     """
 
     win32api.PostMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, INPUTLANGCHANGE_SYSCHARSET, hkl)
+    save_current_hkl(hkl)
+    if on_layout_changed is not None:
+        on_layout_changed(hkl)
+ 
     """Async request for language changing.
     Window may reject language changing.
     

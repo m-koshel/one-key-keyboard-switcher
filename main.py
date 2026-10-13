@@ -18,7 +18,7 @@
 __author__ = "MK"
 __copyright__ = "Copyright © 2026 MK"
 __license__ = "GNU GPL v3+"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 import logging
 from logging import FileHandler, Logger
@@ -57,15 +57,7 @@ def main() -> None:
 
     config: Config = Config()
 
-    keyboard_listeners: List[KeyboardListener] = [
-        KeyboardListener(
-            key_name,
-            hkl=hkl,
-            timeout=config.key_press_timeout,
-            layout_switching=config.layout_switching,
-        )
-        for key_name, hkl in config.hotkeys.items()
-    ]
+    keyboard_listeners: List[KeyboardListener] = []
 
     def start_listen() -> None:
         for listener in keyboard_listeners:
@@ -90,6 +82,24 @@ def main() -> None:
         start_listen_keyboard=start_listen,
         stop_listen_keyboard=stop_listen,
         country_code=country_code
+    )
+
+    def update_tray_layout(hkl: int) -> None:
+        layout: LayoutInfo = layout_info_util.from_hkl(hkl)
+        country_code: str = layout.country_code or ''
+        if not country_code:
+            logger.error(f'Failed to obtain country code: {str(layout)}')
+        tray_icon.update_layout(country_code)
+
+    keyboard_listeners.extend(
+        KeyboardListener(
+            key_name,
+            hkl=hkl,
+            timeout=config.key_press_timeout,
+            layout_switching=config.layout_switching,
+            on_layout_changed=update_tray_layout,
+        )
+        for key_name, hkl in config.hotkeys.items()
     )
 
     monitor: KeyboardLayoutMonitor = KeyboardLayoutMonitor(

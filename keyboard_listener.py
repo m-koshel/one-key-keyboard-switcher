@@ -38,7 +38,8 @@ class KeyboardListener:
             key_name: str,
             hkl: int | None = None,
             timeout: float = None,
-            layout_switching: str = 'CKL'
+            layout_switching: str = 'CKL',
+            on_layout_changed: Callable[[int], None] | None = None
     ) -> None:
         if hkl is None:
             logger.info(f'Set listener for round switch on "{key_name}"')
@@ -52,6 +53,7 @@ class KeyboardListener:
         self._key_down_time: float = 0
         """Time when the key was pressed down."""
         self._hkl: int | None = hkl
+        self._on_layout_changed: Callable[[int], None] | None = on_layout_changed
 
     def start_listen(self) -> None:
         if self._on_press_remove is None:
@@ -96,6 +98,6 @@ class KeyboardListener:
         self._key_down_time = 0
 
         if self._hkl is not None:
-            keyboard_layout_controller.set_layout(self._hkl)
+            keyboard_layout_controller.set_layout(self._hkl, self._on_layout_changed)
         else:
-            keyboard_layout_controller.set_next_layout(self._layout_switching)
+            keyboard_layout_controller.set_next_layout(self._layout_switching, self._on_layout_changed)

@@ -2,6 +2,8 @@
 
 This simple program was developed to implement keyboard layout switching using just one key.
 
+Current version: `0.2.0`.
+
 Fork repository: https://github.com/m-koshel/one-key-keyboard-switcher
 
 Upstream repository: https://github.com/asilichenko/one-key-keyboard-switcher
@@ -58,6 +60,8 @@ The program provides a convenient way to switch between keyboard layouts using a
 While the program is running it displays current keyboard layout as a flag:
 
 ![tray_icon-uk](docs/img/tray_icon-uk.png)
+
+When a hotkey requests a layout change, the tray flag updates immediately to the requested layout. The background monitor continues checking for changes to the active layout and updates the flag when it detects one.
 
 The tray icon feature was implemented using the `pystray` library in the script [tray_icon.py](tray_icon.py).
 
