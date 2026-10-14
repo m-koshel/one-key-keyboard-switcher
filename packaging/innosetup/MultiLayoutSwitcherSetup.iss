@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "Multi Layout Switcher"
-#define MyAppVersion "0.2.0"
+#define MyAppVersion "0.3.0"
 #define MyAppPublisher "MK"
 #define MyAppURL "https://github.com/m-koshel/one-key-keyboard-switcher"
 

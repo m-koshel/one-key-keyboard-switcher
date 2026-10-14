@@ -76,6 +76,27 @@ right shift = 0x409
 
             self.assertEqual(config.layout_switching, "FLU")
 
+    def test_window_title_exceptions_default_to_empty(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            config_path = Path(temporary_directory) / "config.ini"
+            config_path.write_text("[settings]\n", encoding="utf-8")
+
+            config = Config(config_path=config_path)
+
+            self.assertEqual(config.window_title_exceptions, ())
+
+    def test_window_title_exceptions_parse_comma_separated_fragments(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            config_path = Path(temporary_directory) / "config.ini"
+            config_path.write_text(
+                "[settings]\nwindow title exceptions = Notepad,  Task Manager \n",
+                encoding="utf-8",
+            )
+
+            config = Config(config_path=config_path)
+
+            self.assertEqual(config.window_title_exceptions, ("Notepad", "Task Manager"))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -2,7 +2,9 @@
 
 This simple program was developed to implement keyboard layout switching using just one key.
 
-Current version: `0.2.0`.
+Current version: `0.3.0`.
+
+Version 0.3.0 adds configurable window-title exceptions for layout switching; see [Configuration](#configuration).
 
 Fork repository: https://github.com/m-koshel/one-key-keyboard-switcher
 
@@ -238,6 +240,7 @@ Through the [config.ini](config.ini) file, you can configure:
   ```
 * How often should the program check if the keyboard layout has changed to update the tray icon - option `layout check interval` in `[settings]`. It may be either an integer or a float (minimum value is 0.1).
 * Duration of holding the hot-key to consider it a timeout - option `key press timeout` in `[settings]`. It may be either an integer or a float (minimum value is 0.1).
+* Window-title exceptions - option `window title exceptions` in `[settings]`. Specify comma-separated title fragments; matching is case-insensitive and skips the layout request when either the foreground or parent window title contains a fragment. Leave it empty to disable exceptions.
 
 # Sources
 

@@ -81,7 +81,8 @@ def get_previous_hkl() -> int | None:
 
 def set_next_layout(
     layout_switching: str = 'CKL',
-    on_layout_changed: Callable[[int], None] | None = None
+    on_layout_changed: Callable[[int], None] | None = None,
+    window_title_exceptions: tuple[str, ...] = (),
 ) -> None:
     """Switches to the next cyclic HKL or the most recently used HKL."""
 
@@ -93,21 +94,25 @@ def set_next_layout(
             installed_hkls: tuple[int, ...] = get_installed_hkls()
             _previous_hkl = installed_hkls[0] if installed_hkls else None
         else:
-            set_layout(_previous_hkl, on_layout_changed)
+            set_layout(_previous_hkl, on_layout_changed, window_title_exceptions)
             return
     
     installed_hkls: tuple[int, ...] = get_installed_hkls()
     current_hkl: int = get_active_hkl()
     current_index: int = installed_hkls.index(current_hkl)
     next_hkl: int = installed_hkls[(current_index + 1) % len(installed_hkls)]
-    set_layout(next_hkl, on_layout_changed)
+    set_layout(next_hkl, on_layout_changed, window_title_exceptions)
 
 
 def get_parent_window(hwnd: int) -> Optional[int]:
     return win32gui.GetParent(hwnd)
 
 
-def set_layout(hkl: int, on_layout_changed: Callable[[int], None] | None = None) -> None:
+def set_layout(
+    hkl: int,
+    on_layout_changed: Callable[[int], None] | None = None,
+    window_title_exceptions: tuple[str, ...] = (),
+) -> None:
     """Sets the keyboard layout according to either the language ID or the layout ID.
     If a language contains more than one layout, it could be important what you pass to this method
     and what you want to change.
@@ -133,6 +138,19 @@ def set_layout(hkl: int, on_layout_changed: Callable[[int], None] | None = None)
     To get window title:
         window_title = win32gui.GetWindowText(foreground_wnd)
     """
+
+    child_title: str = win32gui.GetWindowText(foreground_wnd)
+    parent_title: str = win32gui.GetWindowText(parent_hwnd) if parent_hwnd else ''
+    excluded_title_fragments: tuple[str, ...] = tuple(
+        title.strip().casefold()
+        for title in window_title_exceptions
+        if title.strip()
+    )
+    if any(
+        fragment in child_title.casefold() or fragment in parent_title.casefold()
+        for fragment in excluded_title_fragments
+    ):
+        return
 
     win32api.PostMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, INPUTLANGCHANGE_SYSCHARSET, hkl)
     save_current_hkl(hkl)

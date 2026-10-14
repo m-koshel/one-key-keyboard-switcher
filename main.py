@@ -18,7 +18,7 @@
 __author__ = "MK"
 __copyright__ = "Copyright © 2026 MK"
 __license__ = "GNU GPL v3+"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 import logging
 from logging import FileHandler, Logger
@@ -98,6 +98,7 @@ def main() -> None:
             timeout=config.key_press_timeout,
             layout_switching=config.layout_switching,
             on_layout_changed=update_tray_layout,
+            window_title_exceptions=config.window_title_exceptions,
         )
         for key_name, hkl in config.hotkeys.items()
     )

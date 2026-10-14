@@ -25,6 +25,7 @@ DEFAULT_CONFIG = {
     'key_press_timeout': 0.15,
     'layout_check_interval': 0.5,
     'layout_switching': 'CKL',
+    'window_title_exceptions': '',
 }
 
 
@@ -63,6 +64,16 @@ class Config:
                 self.layout_switching,
             )
             self.layout_switching = 'CKL'
+
+        self.window_title_exceptions: tuple[str, ...] = tuple(
+            title.strip()
+            for title in parser.get(
+                'settings',
+                'window title exceptions',
+                fallback=DEFAULT_CONFIG['window_title_exceptions'],
+            ).split(',')
+            if title.strip()
+        )
 
         hotkeys: dict[str, Optional[int]] = {}
         if parser.has_section('hotkeys'):

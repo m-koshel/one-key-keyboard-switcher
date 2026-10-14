@@ -29,7 +29,7 @@
 import os
 
 APP_NAME = "Multi Layout Switcher"
-APP_VERSION = "0.2.0"
+APP_VERSION = "0.3.0"
 ERR_LOG_FILENAME = "error.log"
 
 IS_DEV_MODE: bool = os.getenv('APP_DEV_MODE', '0') == '1'
